@@ -1,0 +1,61 @@
+\documentclass[11pt]{article}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{amsmath}
+
+
+
+\usepackage[html,dvipsnames]{xcolor}
+
+
+\setlength{\textwidth}{6.5in}
+\setlength{\textheight}{9.0in}
+\headheight=0.5in
+\topmargin=-0.75in
+\oddsidemargin= 0.0in
+\evensidemargin=-0.25in
+
+
+\usepackage[pdfauthor={Tianchen Yuan, Xitong Wang, Zifan Wang},pdftitle={EE 599 Project Propsal},% 
+pdftex,bookmarks]{hyperref} 
+\hypersetup{colorlinks,% 
+citecolor=green,% 
+filecolor=Orange,% 
+linkcolor=blue,% 
+urlcolor=BrickRed,% 
+pdftex} 
+
+
+
+\pagestyle{myheadings}
+\markright{{\bf EE599 - \copyright Tianchen Yuan, Xitong Wang, Zifan Wang - Spring 2019} }
+
+
+\title{\bf EE599 Deep Learning -- Initial Project Propsal}
+\author{\copyright  Tianchen Yuan, Xitong Wang, Zifan Wang}
+
+\begin{document}
+\maketitle
+
+\paragraph{Project Title:}  Estimation of Origin to Destination Matrices using Link Flow Measured Data from Transportation Network
+
+\paragraph{Project Team:} Tianchen Yuan, Xitong Wang, Zifan Wang 
+
+\paragraph{Project Summary:} In this project we propose to estimate Origin to Destination (OD) matrices with traffic flow data at Los Angeles International Airport (LAX) area. We will collect real-world traffic flow data from Los Angeles Department of Transportation (LADOT), and use traffic simulation software VISSIM to generate training data. We will then build a CNN model to find the mapping between traffic flows and OD matrices. The estimation of real OD matrices can be obtained by putting the real-world traffic flows through the CNN model. The performance can be measured again by VISSIM.  
+
+\paragraph{Data Needs and Acquisition Plan:} The real-world traffic flow data includes hourly traffic flows of 14 road segments and 28 parking entrances/exits within LAX area in April 2016. There are 32 OD locations so the size of each OD matrix is $32*32$. To produce training data, we will first generate a random OD matrix based on the real data at each hour, and we will have 720 random OD matrices in total. We will then run Dynamic Traffic Assignment (DTA) for each OD matrix in VISSIM to get the corresponding traffic flows. These are somehow “fake flows” but will help us find the relationship between flows and OD matrices through CNN. We will repeat the above process until we get enough training data. For now it is difficult to determine how much data we need. A rough guess is 3600, which means we will repeat the process 5 times. 
+
+
+\paragraph{Primary References and Codebase:}  We propose to build on the approach used in 
+
+\begin{itemize} 
+\item Ian J. Goodfellow, Jean Pouget-Abadie ``\href{https://papers.nips.cc/paper/5423-generative-adversarial-nets.pdf}{Generative Adversarial Nets},'' Neural Information Processing Systems Conference and Workshops (NIPS, 2014), Montreal, Canada.  
+\item Alec Radford, Luke Metz, Soumith Chintala ``\href{https://arxiv.org/pdf/1511.06434.pdf}{Unsupervised Representation Learning
+With Deep Convolutional Generative Adversarial Networks},'' International Conference on Learning Representations (ICLR 2016), San Juan, Puerto Rico.  
+\item H. Yang, Y. Wang and D. Wang, ``\href{https://www.researchgate.net/publication/329615627_Dynamic_Origin-Destination_Estimation_without_Historical_Origin-Destination_Matrices_for_Microscopic_Simulation_Platform_in_Urban_Network}{Dynamic Origin-Destination Estimation without Historical Origin-Destination Matrices for Microscopic Simulation Platform in Urban Network,},'' International Conference on Intelligent Transportation Systems(2018), Maui, Hawaii, United States.  
+\item Lecture Slide: \href{https://d1b10bmlvqabco.cloudfront.net/attach/jqbjkm8k8bd3as/jl30qxr2rxn3ll/jsvc86ulb9yq/Guest_Lecture_by_Jiali_Duan.pdf}{Generative Adversarial Networks And Its Application}
+\item Traffic Simulation Software: \href{http://vision-traffic.ptvgroup.com/en-us/products/ptv-vissim/}{PTV VISSIM 10}
+\item GitHub codebases: \href{https://github.com/carpedm20/DCGAN-tensorflow} {DCGAN Tensorflow},  
+\href{https://github.com/Newmu/dcgan_code}{DCGAN Code}
+\end{itemize} 
+
