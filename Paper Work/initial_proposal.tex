@@ -41,9 +41,9 @@ pdftex}
 
 \paragraph{Project Team:} Tianchen Yuan, Xitong Wang, Zifan Wang 
 
-\paragraph{Project Summary:} In this project we propose to estimate Origin to Destination (OD) matrices with traffic flow data at Los Angeles International Airport (LAX) area. We will collect real-world traffic flow data from Los Angeles Department of Transportation (LADOT), and use traffic simulation software VISSIM to generate training data. We will then build a CNN model to find the mapping between traffic flows and OD matrices. The estimation of real OD matrices can be obtained by putting the real-world traffic flows through the CNN model. The performance can be measured again by VISSIM.  
+\paragraph{Project Summary:} In this project we propose to estimate Origin to Destination (OD) matrices with traffic flow data at the Los Angeles International Airport (LAX) area. We will collect real-world traffic flow data from the Los Angeles Department of Transportation (LADOT), and use traffic simulation software VISSIM to generate training data. We will then build a Generative Adversary Network (GAN) model to find the mapping between traffic flows and OD matrices. The estimation of real OD matrices can be obtained by putting the real-world traffic flows through the GAN model. The performance can be measured again by VISSIM.  
 
-\paragraph{Data Needs and Acquisition Plan:} The real-world traffic flow data includes hourly traffic flows of 14 road segments and 28 parking entrances/exits within LAX area in April 2016. There are 32 OD locations so the size of each OD matrix is $32*32$. To produce training data, we will first generate a random OD matrix based on the real data at each hour, and we will have 720 random OD matrices in total. We will then run Dynamic Traffic Assignment (DTA) for each OD matrix in VISSIM to get the corresponding traffic flows. These are somehow “fake flows” but will help us find the relationship between flows and OD matrices through CNN. We will repeat the above process until we get enough training data. For now it is difficult to determine how much data we need. A rough guess is 3600, which means we will repeat the process 5 times. 
+\paragraph{Data Needs and Acquisition Plan:} The real-world traffic flow data includes hourly traffic flows of 14 road segments and 28 parking entrances/exits within LAX area in April 2016. There are 32 OD locations so the size of each OD matrix is $32*32$. To produce training data, we will first generate a random OD matrix based on the real data at each hour, and that will be 720 random OD matrices in total. We will then run the Dynamic Traffic Assignment (DTA) for each OD matrix in VISSIM to collect the corresponding traffic flows. These are somehow “fake flows” but will help us find the relationship between flows and OD matrices through GAN. We will repeat the above process until we get enough training data. For now, it is difficult to determine how much data we need. A rough estimation is 3600, which means we will repeat the process 5 times. 
 
 
 \paragraph{Primary References and Codebase:}  We propose to build on the approach used in 
@@ -59,3 +59,22 @@ With Deep Convolutional Generative Adversarial Networks},'' International Confer
 \href{https://github.com/Newmu/dcgan_code}{DCGAN Code}
 \end{itemize} 
 
+
+\paragraph{Architecture Investigation Plan:}  The deep learning network that we plan to build takes 42-dimensional vectors as inputs and outputs a $32*32$ OD matrix. This neural network can be viewed as using the GAN to recover noise images. As a result, we plan to first utilize the architecture used in the above reference and replace the data with our data set. Then, we will modify the GAN network to model our problem well. 
+
+\paragraph{Estimated Compute Needs:}  According to the data set size we have and the benchmarks in this \href{https://lambdalabs.com/blog/titan-v-deep-learning-benchmarks/}{Lamnbda Labs Blog}, one training run for our initial DCGAN architecture will take about 1 hour on a Tesla V100 server, which is the GPU resource in the AWS p3.2xlarge instance. With about \$2 per hour, we expect \$1 per training run. The development of DCGAN may make the model be more complex, so our estimation is about \$4 per training. To improve our GAN model, we expect to tune hyper-parameters in some provisional runs which roughly costs \$30. In addition, we expect to train our model for about 10 runs, which brings our total computing cost around \$70.
+
+\paragraph{Team Roles:} The following is the rough breakdown of roles and responsibilities we plan for our team:
+\begin{itemize}
+\item Tianchen: Data Processing, VISSIM Simulation.
+\item Xitong: Data Augmentation, Slides.
+\item Zifan: Data Augmentation, Get existing codebase running on an AWS instance.
+\end{itemize}
+All team members will work on the GAN architecture development, final presentation, and report.  
+
+
+\paragraph{Requested Mentor with Rationale:} We request Jiali to be our team mentor because he has expertise in GANs. Pengfei Chen from Professor Ioannou’s group is our second choice because he has expertise in VISSIM simulation. We have some questions about whether the designed GAN will work or not in our problem, so we request to talk with mentor before starting this project. 
+% We have a good idea of what we want to do and have a good starting point from the paper and codebase, so we are flexible regarding our mentor assignment.  
+
+
+ \end{document}
