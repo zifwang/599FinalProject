@@ -5,7 +5,6 @@ from sklearn.decomposition import PCA
 
 
 
-
 def load_data_file(fileName):
     """
         This function is used to load data from file using pandas library
@@ -26,9 +25,7 @@ def load_data_file(fileName):
         df = df.drop([0])
     
     # Check data is clean or not which means whether there is same element in 'Unnamed 0' column. If yes, remove it.
-     
-
-
+    df = data_cleaning(df)
 
     # Drop two unnecessary rows
     df = df.drop(['Unnamed: 0','Unnamed: 36'], axis = 1)            # remove the first and the last column from the data frame
@@ -39,9 +36,9 @@ def load_data_file(fileName):
         flows.append(index_array.T)
     # change to numpy array
     flows = np.asarray(flows)
-    samples,features,_ = flows.shape                        # get shape
+    samples,features,_ = flows.shape                                # get shape
     # reshape flows array
-    flows = np.reshape(flows,(samples,features))
+    flows = np.reshape(flows,(samples,features))                    # reshape to (samples,features)
 
     return flows
 
@@ -51,26 +48,39 @@ def data_cleaning(df):
         Arguments: df: pd dataframe
         Returns: dataFrame: a clean data frame with no repeat elements
     """
+    # sort by hour
+    df = df.sort_values(by=['Unnamed: 0'])
+    # Check repeat and remove repeating hour
+    hours = []                                                # create a list to contain hours
+    for i in df.index.values:
+        hour = int(df.loc[[i]]['Unnamed: 0'])                 # get hour 
+        if hour not in hours:
+            hours.append(hour)
+        else:
+            df = df.drop([i])
+    
+    return df
+        
 
     
     
 
 
-def data_analysis(flows):
-    # See the relationship in 24 hours 
-    flows_24 = []
-    # for i in range (24):
-    #     index = np.asarray(df.loc[[i]])
-    #     flows_24.append(index.T)
-    # flows_24_np = np.asarray(flows_24)                                 # shape = (24,35,1)
-    # # flows_24_np means 24 flow vectors in each hour of a day and 35 features in each flow vector
-    # flows_24_np = np.reshape(flows_24_np,(24,35))                      # reshape to (24,35)
+def data_analysis(flows,days):
+    """
+        This data_analysis function is used to analyze 
+    """
+    # See the relationship in 4 days 
+    hours = 
     # # PCA 
     # pca = PCA(n_components = 24)
     # pca.fit(flows_24_np)
     # print(pca.singular_values_)
 
 
-
-flows = load_data_file('../data/TrainingFlow/flow_OD1_0-239.csv')
-# flows = load_data_file('../data/TrainingFlow/flow_OD1_240-719.csv')
+if __name__ == "__main__":
+    # load file
+    flows_1 = load_data_file('../data/TrainingFlow/flow_OD1_0-239.csv')
+    flows_2 = load_data_file('../data/TrainingFlow/flow_OD1_240-719.csv')
+    flows_ls = np.append(flows_1,flows_2,axis=0)                          # append flows together
+    data_analysis(flows_ls)
