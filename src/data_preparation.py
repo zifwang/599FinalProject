@@ -64,14 +64,23 @@ def data_cleaning(df):
 
 def data_analysis(flows,days):
     """
-        This data_analysis function is used to analyze 
+        This data_analysis function is used to analyze flows numpy array
+        Arguments: 
+            flows: input data with numpy type in the shape (number of data,features)
+            days: number of days to see the relationship
+        Returns:
     """
     # See the relationship in days 
     hours = days*24
+    flowLists = []
+    for i in range (0,flows.shape[0]-hours):
+        
+        flowLists.append()
+
+
     # PCA 
     minimum = min(hours,flows.shape[1])
     pca = PCA(n_components = minimum)
-    for i in range 
     # pca.fit(flows_24_np)
     # print(pca.singular_values_)
 
