@@ -66,14 +66,40 @@ def data_analysis(flows,days):
     """
         This data_analysis function is used to analyze 
     """
-    # See the relationship in days 
-    hours = days*24
+    # Define Constant here
+    # days in a month
+    DAYSINMONTH = 31 
+    # hours in a day
+    HOURSINDAY = 24
+
+    # Define variable: total hours of given days
+    total_hours = days*HOURSINDAY
+
+    # Data Seperation
+    flows_given_days = []           # a list contains data
+    for i in range (0,DAYSINMONTH-days):
+        flows_given_days.append(flows[i*HOURSINDAY:(i+days)*HOURSINDAY,:])
+    
     # PCA 
-    minimum = min(hours,flows.shape[1])
-    pca = PCA(n_components = minimum)
-    for i in range 
-    # pca.fit(flows_24_np)
-    # print(pca.singular_values_)
+    flows_dimension_reduction = []
+    pca_score = []
+    pca_precision = []
+    minimum = min(total_hours,flows.shape[1])                        # Compare hours with features 
+    pca = PCA(n_components = minimum)                                # Set up PCA by n_components
+    start_day = 1
+    end_day = 4
+    for flow in flows_given_days:
+        pca.fit(flow)
+        pca_score.append(pca.score(flow))
+        pca_precision.append(pca.get_precision())
+        flows_dimension_reduction.append(pca.transform(flow))
+        # print singular_values_
+        print('Day ' + str(start_day) + '-' + str(end_day) + ': ')
+        print(pca.singular_values_)
+        start_day = start_day+1
+        end_day = end_day+1
+
+    
 
 
 if __name__ == "__main__":
@@ -81,4 +107,6 @@ if __name__ == "__main__":
     flows_1 = load_data_file('../data/TrainingFlow/flow_OD1_0-239.csv')
     flows_2 = load_data_file('../data/TrainingFlow/flow_OD1_240-719.csv')
     flows_ls = np.append(flows_1,flows_2,axis=0)                          # append flows together
+    # try different input days below to see pca result
+    print('print singular values:')
     data_analysis(flows_ls,4)
