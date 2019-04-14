@@ -62,18 +62,16 @@ def data_cleaning(df):
     return df
         
 
-    
-    
-
-
 def data_analysis(flows,days):
     """
         This data_analysis function is used to analyze 
     """
-    # See the relationship in 4 days 
-    hours = 
-    # # PCA 
-    # pca = PCA(n_components = 24)
+    # See the relationship in days 
+    hours = days*24
+    # PCA 
+    minimum = min(hours,flows.shape[1])
+    pca = PCA(n_components = minimum)
+    for i in range 
     # pca.fit(flows_24_np)
     # print(pca.singular_values_)
 
@@ -83,4 +81,4 @@ if __name__ == "__main__":
     flows_1 = load_data_file('../data/TrainingFlow/flow_OD1_0-239.csv')
     flows_2 = load_data_file('../data/TrainingFlow/flow_OD1_240-719.csv')
     flows_ls = np.append(flows_1,flows_2,axis=0)                          # append flows together
-    data_analysis(flows_ls)
+    data_analysis(flows_ls,4)
