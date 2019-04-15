@@ -1,0 +1,85 @@
+\documentclass[11pt]{article}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{amsmath}
+
+
+
+\usepackage[html,dvipsnames]{xcolor}
+
+
+\setlength{\textwidth}{6.5in}
+\setlength{\textheight}{9.0in}
+\headheight=0.5in
+\topmargin=-0.75in
+\oddsidemargin= 0.0in
+\evensidemargin=-0.25in
+
+
+\usepackage[pdfauthor={Tianchen Yuan, Xitong Wang, Zifan Wang},pdftitle={EE 599 Project Propsal},% 
+pdftex,bookmarks]{hyperref} 
+\hypersetup{colorlinks,% 
+citecolor=green,% 
+filecolor=Orange,% 
+linkcolor=blue,% 
+urlcolor=BrickRed,% 
+pdftex} 
+
+
+
+\pagestyle{myheadings}
+\markright{{\bf EE599 - \copyright Tianchen Yuan, Xitong Wang, Zifan Wang - Spring 2019} }
+
+
+\title{\bf EE599 Deep Learning -- Project Propsal}
+\author{\copyright  Tianchen Yuan, Xitong Wang, Zifan Wang}
+
+\begin{document}
+\maketitle
+
+\paragraph{Project Title:}  Estimation of Origin to Destination Matrices using Link Flow Measured Data from Transportation Network
+
+\paragraph{Project Team:} Tianchen Yuan, Xitong Wang, Zifan Wang 
+
+\paragraph{Project Summary:} In this project, we propose to estimate Origin to Destination (OD) matrices with traffic flow data at the Los Angeles International Airport (LAX) area. We will collect real-world traffic flow data from the Los Angeles Department of Transportation (LADOT), and use traffic simulation software VISSIM to generate training data. We will then build a \textcolor{red}{Recurrent Neural Network (RNN) model} to find the mapping between traffic flows and OD matrices. The estimation of real OD matrices can be obtained by putting the real-world traffic flows through the \textcolor{red}{RNN model}. The performance can be measured again by VISSIM.  
+
+\paragraph{Data Needs and Acquisition Plan:} The real-world traffic flow data includes hourly traffic flows of 13 road segments and 22 parking entrances/exits within LAX area in April 2016. There are 32 OD locations so the size of each OD matrix is $32*32$. \textcolor{red}{The $ij-th$ entry represents the traffic demand from location i to location j. Although OD matrices are of large size, they are sparse. There are approximately only 150 fixed nonzero entries that we need to estimate.} To produce training data, we will first generate a random OD matrix based on the real data at each hour, and that will be 720 random OD matrices in total. We will then run the Dynamic Traffic Assignment (DTA) for each OD matrix in VISSIM to collect the corresponding traffic flows. These are somehow “fake flows” but will help us find the relationship between flows and OD matrices through \textcolor{red}{RNN}. \textcolor{red}{Training data production is very slow given the data size we need. To tackle this problem, we will do Principal Component Analysiss (PCA) to both training input and output. Hopefully with PCA, the training data length can be reduced to 10800 (must be a multiple of 720).} 
+
+
+\paragraph{Primary References and Codebase:}  We propose to build on the approach used in 
+
+\begin{itemize} 
+\item \textcolor{red}{Kyunghyun Cho, Bart van Merrienboer, Caglar Gulcehre, Dzmitry Bahdanau, Fethi Bougares, Holger Schwenk, and Yoshua Bengio ``\href{https://arxiv.org/pdf/1406.1078.pdf}{Learning Phrase Representations using RNN Encoder-Decoder for Statistical Machine Translation},'' Conference on Empirical Methods in Natural Language Processing (EMNLP, 2014), Doha, Qatar.}
+\item \textcolor{red}{F.A. Gers, J. Schmidhuber, and F. Cummins ``\href{https://ieeexplore.ieee.org/document/818041}{Learning to forget: continual prediction with LSTM},'' International Conference on Artificial Neural Networks (ICANN 1999), Edinburgh, UK.}
+\item H. Yang, Y. Wang and D. Wang, ``\href{https://www.researchgate.net/publication/329615627_Dynamic_Origin-Destination_Estimation_without_Historical_Origin-Destination_Matrices_for_Microscopic_Simulation_Platform_in_Urban_Network}{Dynamic Origin-Destination Estimation without Historical Origin-Destination Matrices for Microscopic Simulation Platform in Urban Network},'' International Conference on Intelligent Transportation Systems(2018), Maui, Hawaii, United States.  
+\item \textcolor{red}{Lecture Slide: \href{https://d1b10bmlvqabco.cloudfront.net/attach/jqbjkm8k8bd3as/hlh7h4p8zmb5sa/jtywp2zthbge/RNNs.pdf}{Recurrent Neural Networks}}
+\item Traffic Simulation Software: \href{http://vision-traffic.ptvgroup.com/en-us/products/ptv-vissim/}{PTV VISSIM 10}
+\item \textcolor{red}{GitHub codebases: \href{https://github.com/dennybritz/rnn-tutorial-gru-lstm} {RNN Tutorial}, 
+\href{https://github.com/jaungiers/LSTM-Neural-Network-for-Time-Series-Prediction}{LSTM Neural Network for Time Series Prediction}}
+\end{itemize} 
+
+
+\paragraph{Architecture Investigation Plan:} \textcolor{red}{The neural network that we plan to build takes time-sequence flow vectors as inputs and outputs time-sequence OD matrices. To model this time-sequence feature, we will utilize the GRU and LSTM architectures based on the above reference. We will also modify the network structure to make sure it is adaptive to our problem.}
+
+\paragraph{Estimated Compute Needs:}  
+\textcolor{red}{According to the data set size we have and the benchmarks in \href{https://arxiv.org/pdf/1806.01818.pdf}{LSTM Benchmarks for Deep Learning Frameworks}, the training time per batch for our initial GRU or LSTM architecture will take about 13 ms on a machine with a Xeon W-2195 CPU and a NVIDIA GTX 1080 graphics card, which is close to the GPU resource in AWS p3.2xlarge instance. With about \$3.06 per hour, we expect \$0.2 per training run. The development of GRU or LSTM may make the model more complex, so our estimation is \$0.5 per training. To improve our GRU or LSTM model, we will tune hyper-parameters in some provisional runs, which roughly costs \$10. In addition, we expect to train our model for about 10 runs, which brings our total computing cost around \$15.}
+
+
+\paragraph{Team Roles:} The following is the rough breakdown of roles and responsibilities we plan for our team:
+\begin{itemize}
+\item Tianchen: Data Collection, VISSIM Simulation.
+\item Xitong: Data Augmentation, Slides.
+\item Zifan: Data Preprocessing, Get existing codebase running on an AWS instance.
+\end{itemize}
+All team members will work on the RNN architecture development, final presentation, and report.  
+
+
+% We have a good idea of what we want to do and have a good starting point from the paper and codebase, so we are flexible regarding our mentor assignment.
+\paragraph{Milestone:} \color{red}{We are about to finish data collection and data preprocessing.
+\begin{itemize}
+    \item \textbf{Data Collection:}  For generating random OD matrices, we define 11 constraints based on the real-world flow data, including nonnegative entries, zero diagonal entries, no demand from parking to parking, etc. These constraints guarantee that our OD matrices make sense in the real world. Then we solve a constrained linear programming problem to obtain one random OD matrix. In one round, we have 720 hourly flow data, so we can generate 720 random OD matrices. In total we need 10800 OD matrices, so we repeat the process 15 times. The next step is to run DTA for each OD matrix in VISSIM to get the corresponding flows. At this time, we will have 10800 flow vectors as the training input and 10800 OD matrices as the training output.   
+    \item \textbf{Data Preprocessing:} Simulation of time-sequence flow vectors requires time length. We choose 4 days, i.e. 96 hours, as our time length, because 4 days are reasonable to monitor the flow change between weekdays and weekends. The length of each flow vector is 35, including 13 road segments and 22 parking entrances/exits in LAX. Therefore, each data sample is a $96*35$ dimensional matrix. In reality, there must be some correlations between traffic flows in main roads and nearby parking lots. As a result, we perform PCA to flow matrices and find that the top ten principal components have most of the energy. Then we reduce the dimension of our data sample to $96*10$.
+\end{itemize}}
+
+
+ \end{document}
