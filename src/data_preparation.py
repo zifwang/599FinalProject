@@ -13,6 +13,7 @@ def load_flow_directory_files(directory):
     """
     print('-----------Getting File From %s-----------'%directory)
     index = 0
+    load_list = []
     for filename in os.listdir(directory):
         # print(os.path.join(directory,filename))
         print('Getting File: %s'%filename)
@@ -89,7 +90,7 @@ def data_flow_cleaning(df):
     return df
         
 
-def data_analysis(flows,numKernels):
+def data_flow_analysis(flows,numKernels):
     """
         This data_analysis function is used to analyze flows numpy array
         Arguments: 
