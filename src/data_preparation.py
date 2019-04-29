@@ -1,11 +1,33 @@
 import numpy as np
 import pandas as pd
+import math
+import os
 """ Applying PCA function on flow vector """ 
 from sklearn.decomposition import PCA 
 
+def load_flow_directory_files(directory):
+    """
+        This function is used to load all files in the given directory
+        Arguments: directory: files location
+        Returns: flows_np: a numpy array (row: samples. cols: features)
+    """
+    print('-----------Getting File From %s-----------'%directory)
+    index = 0
+    for filename in os.listdir(directory):
+        # print(os.path.join(directory,filename))
+        print('Getting File: %s'%filename)
+        flow = load_flow_file(os.path.join(directory,filename))
+        print(flow.shape)
+        if index == 0:
+            flows = flow
+        else:
+            flows = np.concatenate((flows,flow), axis = 0)
+        index += 1
+
+    return flows
 
 
-def load_data_file(fileName):
+def load_flow_file(fileName):
     """
         This function is used to load data from file using pandas library
         Arguments: fileName: The .csv file name
@@ -25,7 +47,7 @@ def load_data_file(fileName):
         df = df.drop([0])
     
     # Check data is clean or not which means whether there is same element in 'Unnamed 0' column. If yes, remove it.
-    df = data_cleaning(df)
+    df = data_flow_cleaning(df)
 
     # Drop two unnecessary rows
     df = df.drop(['Unnamed: 0','Unnamed: 36'], axis = 1)            # remove the first and the last column from the data frame
@@ -42,7 +64,7 @@ def load_data_file(fileName):
 
     return flows
 
-def data_cleaning(df):
+def data_flow_cleaning(df):
     """
         This function is used to clean data frame
         Arguments: df: pd dataframe
@@ -52,65 +74,45 @@ def data_cleaning(df):
     df = df.sort_values(by=['Unnamed: 0'])
     # Check repeat and remove repeating hour
     hours = []                                                # create a list to contain hours
+    # Drop all NaN
     for i in df.index.values:
-        hour = int(df.loc[[i]]['Unnamed: 0'])                 # get hour 
+        if(math.isnan(df.loc[[i]]['Unnamed: 0'])):
+            df = df.drop([i])
+
+    for i in df.index.values:
+        hour = int(df.loc[[i]]['Unnamed: 0'])
         if hour not in hours:
             hours.append(hour)
         else:
             df = df.drop([i])
-    
+
     return df
         
 
-def data_analysis(flows,days):
+def data_analysis(flows,numKernels):
     """
         This data_analysis function is used to analyze flows numpy array
         Arguments: 
             flows: input data with numpy type in the shape (number of data,features)
-            days: number of days to see the relationship
+            numkernels: number of kernels used in PCA (constrained here make sure numKernels less than )
         Returns:
     """
-    # Define Constant here
-    # days in a month
-    DAYSINMONTH = 31 
-    # hours in a day
-    HOURSINDAY = 24
+    assert(numKernels <= flows.shape[1])            # Error: number of kernels are more than flows' features
+    # Do PCA 
+    pca = PCA(n_components = numKernels)
+    pca.fit(flows)
+    pca.transform(flows)
 
-    # Define variable: total hours of given days
-    total_hours = days*HOURSINDAY
 
-    # Data Seperation
-    flows_given_days = []           # a list contains data
-    for i in range (0,DAYSINMONTH-days):
-        flows_given_days.append(flows[i*HOURSINDAY:(i+days)*HOURSINDAY,:])
     
-    # PCA 
-    flows_dimension_reduction = []
-    pca_score = []
-    pca_precision = []
-    minimum = min(total_hours,flows.shape[1])                        # Compare hours with features 
-    pca = PCA(n_components = minimum)                                # Set up PCA by n_components
-    start_day = 1
-    end_day = 4
-    for flow in flows_given_days:
-        pca.fit(flow)
-        pca_score.append(pca.score(flow))
-        pca_precision.append(pca.get_precision())
-        flows_dimension_reduction.append(pca.transform(flow))
-        # print singular_values_
-        print('Day ' + str(start_day) + '-' + str(end_day) + ': ')
-        print(pca.singular_values_)
-        start_day = start_day+1
-        end_day = end_day+1
 
     
 
 
 if __name__ == "__main__":
-    # load file
-    flows_1 = load_data_file('../data/TrainingFlow/flow_OD1_0-239.csv')
-    flows_2 = load_data_file('../data/TrainingFlow/flow_OD1_240-719.csv')
-    flows_ls = np.append(flows_1,flows_2,axis=0)                          # append flows together
-    # try different input days below to see pca result
-    print('print singular values:')
-    data_analysis(flows_ls,4)
+    # Load File From Given Directory
+    flows = load_flow_directory_files('../data/TrainingFlow')
+    print(flows.shape)
+    # # try different input days below to see pca result
+    # print('print singular values:')
+    # data_analysis(flows_ls,4)
