@@ -7,30 +7,37 @@ from sklearn.decomposition import PCA
 
 def load_flow_directory_files(directory):
     """
-        This function is used to load all files in the given directory
+        This function is used to load all flow files from the given directory
         Arguments: directory: files location
         Returns: flows_np: a numpy array (row: samples. cols: features)
+                 load_list: file number
     """
     print('-----------Getting File From %s-----------'%directory)
-    index = 0
+    position = 0
     load_list = []
     for filename in os.listdir(directory):
-        # print(os.path.join(directory,filename))
+        # Check whether file in the directory has '.csv'. If not, skip this file
+        position_csv = filename.find('.csv')
+        if position_csv == -1: continue
         print('Getting File: %s'%filename)
+        # Append file sequence to the load_list
+        load_list.append(filename[filename.index('.')-1])
+        # Get flows from each file
         flow = load_flow_file(os.path.join(directory,filename))
-        print(flow.shape)
-        if index == 0:
+        # In the first position, assign return flows with flow
+        if position == 0:
             flows = flow
         else:
             flows = np.concatenate((flows,flow), axis = 0)
-        index += 1
+        # Increment i
+        position += 1
 
-    return flows
+    return flows,load_list
 
 
 def load_flow_file(fileName):
     """
-        This function is used to load data from file using pandas library
+        This function is used to load flow data from file using pandas library
         Arguments: fileName: The .csv file name
         Returns: a numpy array: rows: samples. cols: features
     """
@@ -67,7 +74,7 @@ def load_flow_file(fileName):
 
 def data_flow_cleaning(df):
     """
-        This function is used to clean data frame
+        This function is used to clean flow data frame
         Arguments: df: pd dataframe
         Returns: dataFrame: a clean data frame with no repeat elements
     """
@@ -79,7 +86,7 @@ def data_flow_cleaning(df):
     for i in df.index.values:
         if(math.isnan(df.loc[[i]]['Unnamed: 0'])):
             df = df.drop([i])
-
+    # Drop flows with the same hour
     for i in df.index.values:
         hour = int(df.loc[[i]]['Unnamed: 0'])
         if hour not in hours:
@@ -104,7 +111,10 @@ def data_flow_analysis(flows,numKernels):
     pca.fit(flows)
     pca.transform(flows)
 
-
+def load_OD_directory_files(directory,load_flow_sequence):
+    """
+        
+    """
     
 
     
@@ -112,8 +122,10 @@ def data_flow_analysis(flows,numKernels):
 
 if __name__ == "__main__":
     # Load File From Given Directory
-    flows = load_flow_directory_files('../data/TrainingFlow')
-    print(flows.shape)
+    flows, flow_sequence = load_flow_directory_files('../data/TrainingFlow')
+
+
+
     # # try different input days below to see pca result
     # print('print singular values:')
     # data_analysis(flows_ls,4)
