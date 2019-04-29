@@ -5,6 +5,10 @@ import os
 """ Applying PCA function on flow vector """ 
 from sklearn.decomposition import PCA 
 
+"""
+    Methods to read flows
+"""
+#############################################
 def load_flow_directory_files(directory):
     """
         This function is used to load all flow files from the given directory
@@ -33,7 +37,6 @@ def load_flow_directory_files(directory):
         position += 1
 
     return flows,load_list
-
 
 def load_flow_file(fileName):
     """
@@ -96,7 +99,6 @@ def data_flow_cleaning(df):
 
     return df
         
-
 def data_flow_analysis(flows,numKernels):
     """
         This data_analysis function is used to analyze flows numpy array
@@ -110,20 +112,65 @@ def data_flow_analysis(flows,numKernels):
     pca = PCA(n_components = numKernels)
     pca.fit(flows)
     pca.transform(flows)
+#############################################
 
-def load_OD_directory_files(directory,load_flow_sequence):
+"""
+    Methods to read ODs
+"""
+#############################################
+def load_OD_directiory_files(directory,flows_file_sequence,flows):
     """
-        
+        Function to read OD matrix from a given directory
+        In order to make training X and Y be a pair, use flow files reading sequence.
+        Arguments:
+            1. directory: directory of OD matrix
+            2. flows_file_sequence: flow files reading sequence
+            3. flows: flows data loaded from a given flow directory. Use in the dimension check before return
+        Return:
+            1. dataMatrix: a numpy array with shape (number of samples (should be match to the number of samples in flow data),vectorized OD matrix (should be in 150 dimensions))
     """
+    return  # Dumy return here
+
+def load_OD_file(fileName):
+    """
+        This function is used to load OD matrix data from file using pandas library
+        Arguments: fileName: The .csv file name
+        Returns: a numpy array: rows: samples. cols: vectorized OD matrix (should be in 150 dimensions)
+    """
+
+    return # Dumy return here
+
+def vectorize_OD_matrix():
+    """
+        Function to 
+    """
+
+def data_OD_cleaning(df):
+    """
+        Function 
+    """
+    return # A Dumy return here
+
+def data_OD_analysis(ODs,numKernels):
+    """
+        This data_analysis function is used to analyze OD matrix numpy array
+        Arguments: 
+            ODs: input data with numpy type in the shape (number of data,features)
+            numkernels: number of kernels used in PCA (constrained here make sure numKernels less than )
+        Returns:
+    """
+    
+#############################################
+
     
 
     
 
 
 if __name__ == "__main__":
-    # Load File From Given Directory
+    # Load File From Given Flow Directory
     flows, flow_sequence = load_flow_directory_files('../data/TrainingFlow')
-
+    # Load File From Given OD Directory
 
 
     # # try different input days below to see pca result
