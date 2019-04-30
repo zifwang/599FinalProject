@@ -1,3 +1,11 @@
+"""
+    Author: Zifan Wang
+    Purpose: implements some utility functions for training our RNN
+    Functions: See the comments inside of each function for details.
+        1. flow_data_pca(): used to reduce the training input dataset's size.
+        2. OD_data_pca(): used to reduce the training output (ground truth) dataset's size.
+        3. training_data_generation(): use to generate shuffled training data.
+"""
 import numpy as np
 import data_preparation
 """ Applying PCA function on flow vector """ 
@@ -16,8 +24,8 @@ def flow_data_pca(flows,numKernels):
     # Do PCA 
     pca = PCA(n_components = numKernels)
     pca.fit(flows)
-    print(pca.singular_values_)
-    print(pca.explained_variance_ratio_)
+    # print(pca.singular_values_)
+    # print(pca.explained_variance_ratio_)
     
     return pca.transform(flows)
 
@@ -34,8 +42,8 @@ def OD_data_pca(ODs,numKernels):
     # Do PCA
     pca = PCA(n_components = numKernels)
     pca.fit(ODs)
-    print(pca.singular_values_)
-    print(pca.explained_variance_ratio_)
+    # print(pca.singular_values_)
+    # print(pca.explained_variance_ratio_)
     
     return pca.transform(ODs)
 
