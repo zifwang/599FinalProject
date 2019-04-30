@@ -91,9 +91,6 @@ def main():
     # # Reshape Y_train to the one whose size has a image like
     # Y_train = Y_train.reshape((numOfY,time_length_y,features_y,1))
 
-    print(Y_train.shape)
-    print(X_train.shape)
-
     rnnModel = Sequential()
     rnnModel = create_rnn_model(rnnModel,'GRU',(time_length_x,features_x),(time_length_y,features_y))
     
@@ -111,7 +108,7 @@ def main():
           )
     
     # Save Model
-    rnnModel.save('my_rnn_model.h5')
+    rnnModel.save('../model/my_rnn_model.h5')
     print('Save Model to Disk')
     ##############################################################################################
 
