@@ -42,14 +42,10 @@ def create_rnn_model(rnnModel,rnn_type,inputSize,outputShape):
     
     # Can try leakyRelu here
     rnnModel.add(Dense(128,activation='relu'))       
-    rnnModel.add(Dense(512,activation='relu'))
-    rnnModel.add(Dense(1024,activation='relu'))
-    rnnModel.add(Dense(np.prod(outputShape),activation='tanh'))
-    rnnModel.add(Reshape(outputShape))
+    rnnModel.add(Dense(64,activation='relu'))
+    rnnModel.add(Dense(outputShape[1],activation='relu'))
 
     rnnModel.compile(loss='mean_squared_error',optimizer='Adam',metrics=['accuracy'])
-    
-    print('in model build')
 
     return rnnModel
 
