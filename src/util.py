@@ -1,4 +1,5 @@
 import numpy as np
+import data_preparation
 """ Applying PCA function on flow vector """ 
 from sklearn.decomposition import PCA 
 
@@ -38,3 +39,17 @@ def OD_data_pca(ODs,numKernels):
     print(pca.explained_variance_ratio_)
     
     return pca.transform(ODs)
+
+if __name__ == "__main__":
+    # Load File From Given Flow Directory
+    flows, flow_sequence = data_preparation.load_flow_directory_files('../data/TrainingFlow')
+
+    # Load File From Given OD Directory
+    vectorized_od = data_preparation.load_OD_directiory_files('../data/TrainingOD',flow_sequence,flows)
+
+    numKernels_flows = 10
+    _ = flow_data_pca(flows,numKernels_flows)
+
+
+    numKernels_ODs = 10
+    _ = OD_data_pca(vectorized_od,numKernels_ODs)

@@ -3,7 +3,7 @@
     File Purpose: This file is used to Getting Data from given directories for the final project
     Two main functions: 
             1. load_flow_directory_files(directory): load flows from a given directory which contains flow data. Example, load_flow_directory_files('../data/TrainingFlow')
-            2. load_OD_directiory_files(directory): load OD matrix from a top folder contains OD matrix data. For example, in this project, OD matrix (ls_od_1_0.csv) is in OD_1 folder which is in TrainingOD folder.
+            2. load_OD_directiory_files(directory,flows_file_sequence,flows): load OD matrix from a top folder contains OD matrix data. For example, in this project, OD matrix (ls_od_1_0.csv) is in OD_1 folder which is in TrainingOD folder.
                                                     So, the input of this function is the path of TrainingOD. Example, load_OD_directiory_files('../data/TrainingOD',sequence from load_flow_directory_files, flows from load_flow_directory_files)
 """
 import numpy as np
