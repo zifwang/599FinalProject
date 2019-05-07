@@ -6,6 +6,7 @@ import util
 from sklearn.model_selection import train_test_split
 """Keras"""
 from keras.models import Sequential
+from keras import regularizers
 from keras.layers import Dense
 from keras.layers import Flatten
 from keras.layers import Reshape
@@ -27,22 +28,23 @@ def create_rnn_model(rnnModel,rnn_type,inputSize,outputShape):
     #     sys.exit()
 
     if(rnn_type == 'GRU'):
-        rnnModel.add(CuDNNGRU(units=32, kernel_initializer='glorot_uniform', recurrent_initializer='orthogonal', 
+        rnnModel.add(CuDNNGRU(units=64, kernel_initializer='glorot_uniform', recurrent_initializer='orthogonal', 
 			bias_initializer='zeros', kernel_regularizer=None, recurrent_regularizer=None, 
 			bias_regularizer=None, activity_regularizer=None, kernel_constraint=None, 
 			recurrent_constraint=None, bias_constraint=None, return_sequences=True, 
 			return_state=False, stateful=False, input_shape=inputSize))
     
     if(rnn_type == 'LSTM'):
-        rnnModel.add(CuDNNLSTM(units=32, kernel_initializer='glorot_uniform', recurrent_initializer='orthogonal', 
+        rnnModel.add(CuDNNLSTM(units=64, kernel_initializer='glorot_uniform', recurrent_initializer='orthogonal', 
 			bias_initializer='zeros', unit_forget_bias=True, kernel_regularizer=None, recurrent_regularizer=None, 
 			bias_regularizer=None, activity_regularizer=None, kernel_constraint=None, recurrent_constraint=None, bias_constraint=None, 
 			return_sequences=True, return_state=False, stateful=False, input_shape=inputSize))
     print(np.prod(outputShape))
 
     # Can try leakyRelu here
-    rnnModel.add(Dense(128,activation='relu'))       
-    rnnModel.add(Dense(64,activation='relu'))
+    rnnModel.add(Dense(128,activation='relu',kernel_regularizer=regularizers.l2(0.01)))       
+    rnnModel.add(Dense(256,activation='relu',kernel_regularizer=regularizers.l2(0.01)))
+    rnnModel.add(Dense(64,activation='relu',kernel_regularizer=regularizers.l2(0.01)))
     rnnModel.add(Dense(outputShape[1],activation='relu'))
 
     rnnModel.compile(loss='mean_squared_error',optimizer='Adam',metrics=['accuracy'])
@@ -54,16 +56,16 @@ def main():
     """
         Section of Loading training data
         Variable here:
-            1. numKernels_flows: number of PCA kernels for flows data
-            2. numKernels_ODs: number of PCA kernels for ODs data
+            1. energyUsed_flows: % of energy being perserved
+            2. numKernels_ODs: % of energy being perserved
             3. numDays: time length of training RNN
         Return:
             X_train: flows
             Y_train: vectorized_OD
     """
     # Variables Defines In here: change in the experiments
-    numKernels_flows = 15
-    numKernels_ODs = 15
+    energyUsed_flows = 0.98
+    energyUsed_ODs = 0.98
     numDays = 4
 
     # Load File From Given Flow Directory
@@ -73,8 +75,8 @@ def main():
     vectorized_od = data_preparation.load_OD_directiory_files('../data/TrainingOD',flow_sequence,flows)
 
     # Apply PCA method to reduce flows & vectorized_od data
-    flows_reduced = util.flow_data_pca(flows,numKernels_flows)
-    ODs_reduced = util.OD_data_pca(vectorized_od,numKernels_ODs)
+    flows_reduced = util.flow_data_pca(flows,energyUsed_flows)
+    ODs_reduced = util.OD_data_pca(vectorized_od,energyUsed_ODs)
 
     # Generate a shuffled X_train and its corresponding Y_train data
     X_train,Y_train = util.training_data_generation(flows_reduced,ODs_reduced,numDays)
@@ -100,8 +102,8 @@ def main():
     # Training
     rnnModel.fit(x=X_train,
           y=Y_train, 
-          batch_size=128, 
-          epochs=50, 
+          batch_size=32, 
+          epochs=200, 
           verbose=1,
           validation_split=0.1,
           shuffle=True

@@ -54,16 +54,16 @@ def main():
     """
         Section of Loading training data
         Variable here:
-            1. numKernels_flows: number of PCA kernels for flows data
-            2. numKernels_ODs: number of PCA kernels for ODs data
+            1. energyUsed_flows: % of energy being perserved
+            2. energyUsed_ODs: % of energy being perserved
             3. numDays: time length of training RNN
         Return:
             X_train: flows
             Y_train: vectorized_OD
     """
     # Variables Defines In here: change in the experiments
-    numKernels_flows = 15
-    numKernels_ODs = 15
+    energyUsed_flows = 0.98
+    energyUsed_ODs = 0.98
     numDays = 4
 
     # Load File From Given Flow Directory
@@ -73,8 +73,8 @@ def main():
     vectorized_od = data_preparation.load_OD_directiory_files('../data/TrainingOD',flow_sequence,flows)
 
     # Apply PCA method to reduce flows & vectorized_od data
-    flows_reduced = util.flow_data_pca(flows,numKernels_flows)
-    ODs_reduced = util.OD_data_pca(vectorized_od,numKernels_ODs)
+    flows_reduced = util.flow_data_pca(flows,energyUsed_flows)
+    ODs_reduced = util.OD_data_pca(vectorized_od,energyUsed_ODs)
 
     # Generate a shuffled X_train and its corresponding Y_train data
     X_train,Y_train = util.training_data_generation(flows_reduced,ODs_reduced,numDays)
